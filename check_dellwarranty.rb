@@ -31,15 +31,17 @@ end
 
 WSDL_URL = 'http://xserv.dell.com/services/assetservice.asmx?WSDL'
 GUID     = '11111111-1111-1111-1111-111111111111'
-App      = 'check_dellservice'
+App      = 'check_dellwarranty.rb'
+
+PLUGIN_VERSION  = '0.2'
 
 options = {}
 
 optparse = OptionParser.new do|opts|
-  opts.banner = "Usage: check_dellwarranty.rb [options]"
+  opts.banner = "Usage: #{App} -H <hostname> | -s <servicetag> [options]"
 
   options[:hostname] = ""
-  opts.on( '-H', '--hostname HOSTNAME', 'Hostname to get warranty status for. Uses SNMP' ) do |hostname|
+  opts.on( '-H', '--hostname <hostname>', 'Hostname to get warranty status for. Uses SNMP' ) do |hostname|
     options[:hostname] = hostname
   end
 
@@ -63,7 +65,7 @@ optparse = OptionParser.new do|opts|
     options[:debug] = d
   end
 
-  opts.on( '-h', '--help', 'Display this screen' ) do
+  opts.on_tail( '-h', '--help', 'Display this screen' ) do
     puts opts
     exit 2
   end
