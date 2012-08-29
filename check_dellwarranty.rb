@@ -45,6 +45,24 @@ optparse = OptionParser.new do|opts|
     options[:hostname] = hostname
   end
 
+  options[:snmp_comm] = 'public'
+  opts.on( '-C', '--community <community>', 'SNMP Community to use when polling for service tag') do |comm|
+    options[:snmp_comm] = comm
+  end
+
+  options[:snmp_version] = :SNMPv2c
+  opts.on( '-v', '--snmpver <snmpver>', 'SNMP Version to use when polling for service tag') do |ver|
+    case ver
+    when '1'
+      options[:snmp_ver] = :SNMPv1
+    when '2c'
+      options[:snmp_var] = :SNMPv2c
+    else
+      puts "That SNMP version is not supported. Use 1 or 2c only"
+      exit 2
+    end
+  end
+
   options[:warn_days] = 90
   opts.on( '-w', '--warning', 'Warning threshold for number of days remaining on contract (Default: 90)' ) do |w|
     options[:warn_days] = w
@@ -187,9 +205,9 @@ def get_snmp_serial ( args )
   end
 
   serial = ''
-  SNMP::Manager.open(:host => hostname) do |manager|
-    response = manager.get('1.3.6.1.4.1.674.10892.1.300.10.1.11.1')
-    response.each_varbind { |vb| serial = vb.value.to_s }
+  SNMP::Manager.open(:host => args[:hostname], :community => args[:community], :version => args[:version]) do |manager|
+    val = manager.get_value('1.3.6.1.4.1.674.10892.1.300.10.1.11.1')
+    serial = val.split[0]
   end
 
   serial
@@ -231,7 +249,9 @@ errlevels = { 0 => "OK",
 
 if options[:hostname].length > 0
   puts "Hostname: #{options[:hostname]}" if options[:debug]
-  serial = get_snmp_serial(options[:hostname])
+  serial = get_snmp_serial( :hostname => options[:hostname],
+                            :community => options[:snmp_comm],
+                            :version => options[:snmp_ver] )
 elsif options[:serial].length > 0
   serial = options[:serial]
 else
