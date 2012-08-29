@@ -45,6 +45,11 @@ optparse = OptionParser.new do|opts|
     options[:hostname] = hostname
   end
 
+  options[:serial] = ""
+  opts.on( '-s', '--servicetag <servicetag>', 'ServiceTag ID to check' ) do |serial|
+    options[:serial] = serial
+  end
+
   options[:snmp_comm] = 'public'
   opts.on( '-C', '--community <community>', 'SNMP Community to use when polling for service tag') do |comm|
     options[:snmp_comm] = comm
@@ -71,11 +76,6 @@ optparse = OptionParser.new do|opts|
   options[:crit_days] = 30
   opts.on( '-c', '--critical', 'Critical threshold for number of days remaining on contract (Default: 30)' ) do |c|
     options[:crit_days] = c
-  end
-
-  options[:serial] = ""
-  opts.on( '-s', '--servicetag', 'ServiceTag ID to check' ) do |serial|
-    options[:serial] = serial
   end
 
   options[:debug] = false
