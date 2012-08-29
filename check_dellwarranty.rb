@@ -159,13 +159,13 @@ class DellEntitlement < ServiceLevel
   attr_accessor :entitlementType,
     :provider
 
-  def initialize(type,desc,prov,code,startDate,endDate)
-    @entitlementType = type
-    @serviceLevelDescription = desc
-    @provider = prov
-    @serviceLevelCode = code
-    self.startDate = startDate
-    self.endDate = endDate
+  def initialize(args)
+    @entitlementType         = args[:type]
+    @serviceLevelDescription = args[:desc] if args[:desc]
+    @provider                = args[:prov] if args[:prov]
+    @serviceLevelCode        = args[:code] if args[:code]
+    self.startDate           = args[:startDate]
+    self.endDate             = args[:endDate]
   end
 
   def startDate
@@ -220,14 +220,16 @@ def get_dell_warranty(serial)
   result = driver.GetAssetInformation(:guid => GUID, :applicationName => App, :serviceTags => serial)
 
   result.getAssetInformationResult.asset.entitlements.entitlementData.each do | ent | 
-      ents.add DellEntitlement.new(
-        ent.entitlementType,
-        ent.serviceLevelDescription,
-        ent.provider,
-        ent.serviceLevelCode,
-        ent.startDate,
-        ent.endDate
-      )
+    entargs = Hash.new
+
+    entargs[:type]      = ent.entitlementType
+    entargs[:startDate] = ent.startDate
+    entargs[:endDate]   = ent.endDate
+    entargs[:prov] = ent.provider                if defined? ent.provider
+    entargs[:desc] = ent.serviceLevelDescription if defined? ent.serviceLevelDescription
+    entargs[:code] = ent.serviceLevelCode        if defined? ent.serviceLevelCode
+
+    ents.add DellEntitlement.new(entargs)
   end
 
   ents
