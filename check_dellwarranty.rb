@@ -69,13 +69,13 @@ optparse = OptionParser.new do|opts|
   end
 
   options[:warn_days] = 90
-  opts.on( '-w', '--warning', 'Warning threshold for number of days remaining on contract (Default: 90)' ) do |w|
-    options[:warn_days] = w
+  opts.on( '-w', '--warning <days>', 'Warning threshold for number of days remaining on contract (Default: 90)' ) do |w|
+    options[:warn_days] = w.to_i
   end
 
   options[:crit_days] = 30
-  opts.on( '-c', '--critical', 'Critical threshold for number of days remaining on contract (Default: 30)' ) do |c|
-    options[:crit_days] = c
+  opts.on( '-c', '--critical <days>', 'Critical threshold for number of days remaining on contract (Default: 30)' ) do |c|
+    options[:crit_days] = c.to_i
   end
 
   options[:debug] = false
@@ -274,6 +274,16 @@ errlevels = { 0 => "OK",
               2 => "CRITICAL",
               3 => "UNKNOWN"
             }
+
+if options[:crit_days] <= 0
+  puts "ERROR: -w and -c must be positive integers"
+  exit 2
+end
+
+if options[:crit_days] > options[:warn_days]
+  puts "ERROR: -w cannot be less than -c"
+  exit 2
+end
 
 if options[:hostname].length > 0
   puts "Hostname: #{options[:hostname]}" if options[:debug]
