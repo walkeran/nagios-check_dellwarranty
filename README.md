@@ -23,3 +23,10 @@ Caveats
 * Change the hashbang line to point to your Ruby installation
 * Only tested on REE 1.8.7
 * You must install the 'snmp' Gem 
+
+History
+------------
+### 0.3 (2012-08-29)
+**Bugfix:** Issue #1 - Deal with instances where Dell doesn't pass back ServiceLevel codes and descriptions
+### 0.2 (2012-08-28)
+**Feature:** First publicly released version (That's a feature, right?!)
