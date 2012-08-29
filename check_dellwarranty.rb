@@ -141,17 +141,43 @@ class DellEntitlements
 
   def add(ent)
     @entitlements.push ent
-    if @servicelevels[ent.serviceLevelCode] != nil
-      @servicelevels[ent.serviceLevelCode].endDate = [ @servicelevels[ent.serviceLevelCode].endDate, ent.endDate ].max
-      
-    else
-      servicelevel = ServiceLevel.new
-      servicelevel.endDate = ent.endDate
-      servicelevel.serviceLevelDescription = ent.serviceLevelDescription
-      servicelevel.serviceLevelCode = ent.serviceLevelCode
 
-      @servicelevels[ent.serviceLevelCode] = servicelevel
+    # Gloss over Expired entitlements. Should we be alerting on
+    #  these? Maybe... maybe not... will have to wait for input
+    if ent.entitlementType == "Expired"
+      return
     end
+
+    slkey = ''
+
+    if ent.serviceLevelCode == nil
+      # This is a somewhat special case, where Dell doesn't supply service
+      #  level codes or descriptions. We should keep track of all of these
+      #  service levels separately, so we'll calculate a new key for it
+
+      # TODO: We should probably check for key collisions at some point. I
+      #  don't foresee this as beinga problem, but you never know!
+      slkey = @servicelevels.length.to_s
+    elsif @servicelevels[ent.serviceLevelCode] != nil
+      # In this case, Dell has given us a service level code, and our
+      #  hash is already tracking this type. Let's just extend the endDate
+      #  if it goes beyond the one that's already recorded
+      @servicelevels[ent.serviceLevelCode].endDate = [ @servicelevels[ent.serviceLevelCode].endDate, ent.endDate ].max
+
+      # And then bail out...
+      return
+    else
+      # Otherwise, we have a decent service level code that we can use as a key
+      slkey = ent.serviceLevelCode
+    end
+
+    # If we get this far, we should add the new service level using the key we've come up with
+    servicelevel = ServiceLevel.new
+    servicelevel.endDate = ent.endDate
+    servicelevel.serviceLevelDescription = ent.serviceLevelDescription if ent.serviceLevelDescription
+    servicelevel.serviceLevelCode = ent.serviceLevelCode if ent.serviceLevelDescription
+
+    @servicelevels[slkey] = servicelevel
   end
 end
 
