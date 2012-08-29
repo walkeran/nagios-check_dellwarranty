@@ -267,6 +267,14 @@ def get_dell_warranty(serial)
   ents
 end
 
+def expire_message(errlevel, daysleft, desc)
+  if desc
+    "\n#{Errlevels[errlevel]}: '#{desc}' support ends in #{daysleft} days"
+  else
+    "\n#{Errlevels[errlevel]}: A support contract ends in #{daysleft} days"
+  end
+end
+
 entitlements = DellEntitlements.new
 serial       = ''
 now          = DateTime.now
@@ -274,6 +282,7 @@ errlevel     = 0
 count        = 0
 expiring     = 0
 nextexpire   = nil
+outmsg       = ''
 
 
 if options[:crit_days] <= 0
@@ -308,26 +317,23 @@ entitlements.servicelevels.sort_by { |k,v| v }.each do |k,sl|
   daysleft = (endDate - now).round
   count += 1
 
-  ## TODO: Condense the following logic a little bit. Also, decide what to do when daysleft is
-  ##   a large negative number (been expired for 2 weeks? Probably not going to renew)
-
   if daysleft >= 0
     nextexpire = (nextexpire == nil) ? daysleft : [nextexpire,daysleft].min
   end
 
-  if daysleft < options[:crit_days]
-    puts "CRITICAL: '#{desc}' support ends in #{daysleft} days"
+  if daysleft <= options[:crit_days]
+    outmsg += expire_message(2, daysleft, desc)
     expiring += 1
     errlevel = [ errlevel, 2 ].max
-  elsif daysleft < options[:warn_days]
-    puts "WARNING: '#{desc}' support ends in #{daysleft} days"
+  elsif daysleft <= options[:warn_days]
+    outmsg += expire_message(1, daysleft, desc)
     expiring += 1
     errlevel = [ errlevel, 1 ].max
   elsif options[:debug]
-    puts "OK: '#{desc}' support ends in #{daysleft} days"
+    outmsg += expire_message(0, daysleft, desc)
   end
 end
 
-puts "#{Errlevels[errlevel]}: #{expiring} of #{count} service contracts are expiring (Next: #{nextexpire} days)"
+puts "#{Errlevels[errlevel]}: #{expiring} of #{count} service contracts are expiring (Next: #{nextexpire} days)#{outmsg}"
 
 exit errlevel
