@@ -84,8 +84,13 @@ optparse = OptionParser.new do|opts|
     options[:crit_days] = c.to_i
   end
 
+  options[:verbose] = false
+  opts.on( '-v', '--verbose', 'Enable verbose output' ) do |v|
+    options[:verbose] = v
+  end
+
   options[:debug] = false
-  opts.on( '-d', '--debugging', 'Enable debugging output' ) do |d|
+  opts.on( '-d', '--debugging', 'Enable debugging output (Implies -v)' ) do |d|
     options[:debug] = d
   end
 
@@ -284,6 +289,9 @@ expiring     = 0
 nextexpire   = nil
 outmsg       = ''
 
+if options[:debug]
+  options[:verbose] = true
+end
 
 if options[:crit_days] <= 0
   puts "ERROR: -w and -c must be positive integers"
@@ -322,15 +330,15 @@ entitlements.servicelevels.sort_by { |k,v| v }.each do |k,sl|
   end
 
   if daysleft <= options[:crit_days]
-    outmsg += expire_message(2, daysleft, desc)
+    outmsg += expire_message(2, daysleft, desc) if options[:verbose]
     expiring += 1
     errlevel = [ errlevel, 2 ].max
   elsif daysleft <= options[:warn_days]
-    outmsg += expire_message(1, daysleft, desc)
+    outmsg += expire_message(1, daysleft, desc) if options[:verbose]
     expiring += 1
     errlevel = [ errlevel, 1 ].max
-  elsif options[:debug]
-    outmsg += expire_message(0, daysleft, desc)
+  else
+    outmsg += expire_message(0, daysleft, desc) if options[:verbose]
   end
 end
 
