@@ -35,6 +35,12 @@ App      = 'check_dellwarranty.rb'
 
 PLUGIN_VERSION  = '0.3'
 
+Errlevels = { 0 => "OK",
+              1 => "WARNING",
+              2 => "CRITICAL",
+              3 => "UNKNOWN"
+            }
+
 options = {}
 
 optparse = OptionParser.new do|opts|
@@ -269,11 +275,6 @@ count        = 0
 expiring     = 0
 nextexpire   = nil
 
-errlevels = { 0 => "OK",
-              1 => "WARNING",
-              2 => "CRITICAL",
-              3 => "UNKNOWN"
-            }
 
 if options[:crit_days] <= 0
   puts "ERROR: -w and -c must be positive integers"
@@ -327,6 +328,6 @@ entitlements.servicelevels.sort_by { |k,v| v }.each do |k,sl|
   end
 end
 
-puts "#{errlevels[errlevel]}: #{expiring} of #{count} service contracts are expiring (Next: #{nextexpire} days)"
+puts "#{Errlevels[errlevel]}: #{expiring} of #{count} service contracts are expiring (Next: #{nextexpire} days)"
 
 exit errlevel
