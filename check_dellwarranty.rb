@@ -19,9 +19,15 @@
 ##    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-require 'date'
-require 'optparse'
-require 'soap/wsdlDriver'
+begin
+  require 'date'
+  require 'optparse'
+  require 'soap/wsdlDriver'
+rescue Exception => e
+  puts "You need the date, optparse, and soap libraries installed."
+  puts e.message
+  exit 2
+end
 
 WSDL_URL = 'http://xserv.dell.com/services/assetservice.asmx?WSDL'
 GUID     = '11111111-1111-1111-1111-111111111111'
@@ -59,11 +65,18 @@ optparse = OptionParser.new do|opts|
 
   opts.on( '-h', '--help', 'Display this screen' ) do
     puts opts
-    exit
+    exit 2
   end
 end
 
-optparse.parse!
+begin
+  optparse.parse!
+rescue StandardError => e
+  puts "Error parsing command line arguments."
+  puts e.message
+  puts optparse
+  exit 2
+end
 
 class ServiceLevel
   attr_accessor :serviceLevelDescription, :serviceLevelCode
@@ -79,6 +92,7 @@ class ServiceLevel
       @endDate = DateTime.parse(endDate)
     else
       puts "endDate doesn't accept " + endDate.class.to_s + " types!"
+      exit 2
     end
   end
 
@@ -145,6 +159,7 @@ class DellEntitlement < ServiceLevel
       @startDate = DateTime.parse(startDate)
     else
       puts "startDate doesn't accept " + startDate.class.to_s + " types!"
+      exit 2
     end
   end
 end
@@ -159,9 +174,15 @@ def suppress_warning
   end
 end
 
-def get_snmp_serial(hostname)
-  require 'rubygems'
-  require 'snmp'
+def get_snmp_serial ( args )
+  begin
+    require 'rubygems'
+    require 'snmp'
+  rescue Exception => e
+    puts "You need the snmp gem installed."
+    puts e.message
+    exit 2
+  end
 
   serial = ''
   SNMP::Manager.open(:host => hostname) do |manager|
@@ -213,7 +234,8 @@ elsif options[:serial].length > 0
   serial = options[:serial]
 else
   puts "ERROR: Must supply either a hostname or servicetag!"
-  exit
+  puts optparse
+  exit 2
 end
 
 puts "Serial: #{serial}" if options[:debug]
