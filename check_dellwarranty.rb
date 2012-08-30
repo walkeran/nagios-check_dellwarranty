@@ -4,6 +4,9 @@
 ## Author:    Andy Walker <andy@fbsdata.com>
 ## Copyright: Copyright (c) 2012 FBS Datasystems
 ## License:   GNU General Public License
+## Websites:  https://github.com/walkeran/nagios-check_dellwarranty
+##            http://exchange.nagios.org/directory/Plugins/Hardware/Server-Hardware/Dell/check_dellwarranty/details
+##            https://www.monitoringexchange.org/inventory/Check-Plugins/Hardware/Server-%2528Manufacturer%2529/check_dellwarranty
 ##
 ##    This program is free software: you can redistribute it and/or modify
 ##    it under the terms of the GNU General Public License as published by
@@ -33,7 +36,7 @@ WSDL_URL = 'http://xserv.dell.com/services/assetservice.asmx?WSDL'
 GUID     = '11111111-1111-1111-1111-111111111111'
 App      = 'check_dellwarranty.rb'
 
-PLUGIN_VERSION  = '0.3'
+PLUGIN_VERSION  = '0.4'
 
 Errlevels = { 0 => "OK",
               1 => "WARNING",
