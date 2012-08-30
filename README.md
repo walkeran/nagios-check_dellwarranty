@@ -27,7 +27,7 @@ Caveats
 History
 ------------
 ### 0.4 (2012-08-29)
-**Feature:** Add -v (verbose) option and make -d (debug) work better
+**Feature:** Add -v (verbose) option and make -d (debug) work better  
 **Fix:** Fix -w and -c params
 ### 0.3 (2012-08-29)
 **Bugfix:** Issue #1 - Deal with instances where Dell doesn't pass back ServiceLevel codes and descriptions
