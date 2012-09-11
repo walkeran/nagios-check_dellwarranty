@@ -259,7 +259,18 @@ def get_dell_warranty(serial)
   driver = suppress_warning { SOAP::WSDLDriverFactory.new(WSDL_URL).create_rpc_driver }
   result = driver.GetAssetInformation(:guid => GUID, :applicationName => App, :serviceTags => serial)
 
-  result.getAssetInformationResult.asset.entitlements.entitlementData.each do | ent | 
+  aResult = Array
+  resultType = result.getAssetInformationResult.asset.entitlements.entitlementData.class.to_s
+  if resultType == 'Array'
+    aResult = result.getAssetInformationResult.asset.entitlements.entitlementData
+  elsif resultType == 'SOAP::Mapping::Object'
+    aResult = [ result.getAssetInformationResult.asset.entitlements.entitlementData ]
+  else
+    puts "Returned entitlementData from Dell is a " + resultType + ", and I don't know how to deal with that!"
+    exit 2
+  end
+
+  aResult.each do | ent | 
     entargs = Hash.new
 
     entargs[:type]      = ent.entitlementType
