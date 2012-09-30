@@ -33,6 +33,7 @@ Caveats
 
 History
 ------------
+### 0.5 (2012-09-30)
 **Feature:** Add -D (most distant future) option, to only consider the contract expiring in the most distant future
 **Feature:** Add -l (html link) option, to also include an HTML link to the Dell site with the warranty details
 **Fix:** Now supports snmp libs without needing rubygems

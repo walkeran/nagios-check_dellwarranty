@@ -36,7 +36,7 @@ WSDL_URL = 'http://xserv.dell.com/services/assetservice.asmx?WSDL'
 GUID     = '11111111-1111-1111-1111-111111111111'
 App      = 'check_dellwarranty.rb'
 
-PLUGIN_VERSION  = '0.4'
+PLUGIN_VERSION  = '0.5'
 
 Errlevels = { 0 => "OK",
               1 => "WARNING",
