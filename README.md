@@ -29,12 +29,13 @@ Caveats
 -------
 * Change the hashbang line to point to your Ruby installation
 * Only tested on REE 1.8.7
-* You must install the 'snmp' Gem 
+* You must install the 'snmp' Gem (or have the snmp Ruby library available by some other means)
 
 History
 ------------
 **Feature:** Add -D (most distant future) option, to only consider the contract expiring in the most distant future
 **Feature:** Add -l (html link) option, to also include an HTML link to the Dell site with the warranty details
+**Fix:** Now supports snmp libs without needing rubygems
 ### 0.4 (2012-08-29)
 **Feature:** Add -v (verbose) option and make -d (debug) work better  
 **Fix:** Fix -w and -c params

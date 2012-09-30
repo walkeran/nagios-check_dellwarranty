@@ -247,13 +247,17 @@ def suppress_warning
 end
 
 def get_snmp_serial ( args )
+  try_count = 0
   begin
-    require 'rubygems'
+    try_count += 1
     require 'snmp'
-  rescue Exception => e
-    puts "You need the snmp gem installed."
-    puts e.message
-    exit 2
+  rescue LoadError
+    if try_count == 1
+      require 'rubygems'
+      retry
+    else
+      raise
+    end
   end
 
   serial = ''
@@ -262,7 +266,10 @@ def get_snmp_serial ( args )
     serial = val.split[0]
   end
 
-  serial
+  return serial
+rescue Exception => e
+  puts "Failed to get serial via SNMP: #{e.class}: #{e}"
+  exit 2
 end
 
 def get_dell_warranty(serial)
