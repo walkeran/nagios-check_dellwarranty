@@ -47,7 +47,9 @@ Errlevels = { 0 => "OK",
 options = {}
 
 optparse = OptionParser.new do|opts|
-  opts.banner = "Usage: #{App} -H <hostname> | -s <servicetag> [options]"
+  opts.banner = "check_dellwarranty https://github.com/walkeran/nagios-check_dellwarranty\n" +
+                "Author: Andy Walker <andy@fbsdata.com>\nVersion: #{PLUGIN_VERSION}\n\n" +
+                "Usage: #{App} -H <hostname> | -s <servicetag> [options]"
 
   options[:hostname] = ""
   opts.on( '-H', '--hostname <hostname>', 'Hostname to get warranty status for. Uses SNMP' ) do |hostname|
@@ -60,12 +62,12 @@ optparse = OptionParser.new do|opts|
   end
 
   options[:snmp_comm] = 'public'
-  opts.on( '-C', '--community <community>', 'SNMP Community to use when polling for service tag') do |comm|
+  opts.on( '-C', '--community <community>', 'SNMP Community to use when polling for service tag (Default: public)') do |comm|
     options[:snmp_comm] = comm
   end
 
   options[:snmp_version] = :SNMPv2c
-  opts.on( '-v', '--snmpver <snmpver>', 'SNMP Version to use when polling for service tag') do |ver|
+  opts.on( '-v', '--snmpver <snmpver>', 'SNMP Version to use when polling for service tag (Default: 2c)') do |ver|
     case ver
     when '1'
       options[:snmp_ver] = :SNMPv1

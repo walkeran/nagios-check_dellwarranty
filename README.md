@@ -7,11 +7,16 @@ Usage
 -------
     check_dellwarranty.rb [options]
         -H, --hostname HOSTNAME          Hostname to get warranty status for. Uses SNMP
-        -w, --warning                    Warning threshold for number of days
-                                           remaining on contract (Default: 90)
-        -c, --critical                   Critical threshold for number of days
-                                           remaining on contract (Default: 30)
         -s, --servicetag                 ServiceTag ID to check
+        -C, --community <community>      SNMP Community to use when polling for service tag
+            --snmpver <snmpver>          SNMP Version to use when polling for service tag
+        -w, --warning WARNDAYS           Warning threshold for number of days
+                                           remaining on contract (Default: 90)
+        -c, --critical CRITDAYS          Critical threshold for number of days
+                                           remaining on contract (Default: 30)
+        -D, --distant                    Consider only the contract expiring in the
+                                           most distant future
+        -v, --verbose                    Enable verbose output
         -d, --debugging                  Enable debugging output
         -h, --help                       Display this screen
 
@@ -26,6 +31,7 @@ Caveats
 
 History
 ------------
+**Feature:** Add -D (most distant future) option, to only consider the contract expiring in the most distant future
 ### 0.4 (2012-08-29)
 **Feature:** Add -v (verbose) option and make -d (debug) work better  
 **Fix:** Fix -w and -c params
