@@ -87,6 +87,11 @@ optparse = OptionParser.new do|opts|
     options[:crit_days] = c.to_i
   end
 
+  options[:distant] = false
+  opts.on( '-D', '--distant', 'Consider only the contract expiring in the most distant future' ) do |d|
+    options[:distant] = d
+  end
+
   options[:verbose] = false
   opts.on( '-v', '--verbose', 'Enable verbose output' ) do |v|
     options[:verbose] = v
@@ -356,6 +361,22 @@ servicelevels.each do |sl|
   end
 end
 
-puts "#{Errlevels[errlevel]}: #{expiring} of #{count} service contracts are expiring (Next: #{nextexpire} days)#{outmsg}"
+if options[:distant]
+  sl = servicelevels.last
+  endDate  = sl.endDate
+  desc     = sl.serviceLevelDescription
+  daysleft = (endDate - now).round
+
+  if daysleft <= options[:crit_days]
+    errlevel = 2
+  elsif daysleft <= options[:warn_days]
+    errlevel = 1
+  else
+    errlevel = 0
+  end
+  puts "#{Errlevels[errlevel]}: Most distant expiration is in #{daysleft} days#{outmsg}"
+else
+  puts "#{Errlevels[errlevel]}: #{expiring} of #{count} service contracts are expiring (Next: #{nextexpire} days)#{outmsg}"
+end
 
 exit errlevel
