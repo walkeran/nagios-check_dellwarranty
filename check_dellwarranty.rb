@@ -294,14 +294,14 @@ def expire_message(errlevel, daysleft, desc)
   end
 end
 
-entitlements = DellEntitlements.new
-serial       = ''
-now          = DateTime.now
-errlevel     = 0
-count        = 0
-expiring     = 0
-nextexpire   = nil
-outmsg       = ''
+servicelevels = Hash.new
+serial        = ''
+now           = DateTime.now
+errlevel      = 0
+count         = 0
+expiring      = 0
+nextexpire    = nil
+outmsg        = ''
 
 if options[:debug]
   options[:verbose] = true
@@ -331,9 +331,9 @@ else
 end
 
 puts "Serial: #{serial}" if options[:debug]
-entitlements = get_dell_warranty(serial)
+servicelevels = get_dell_warranty(serial).servicelevels.values.sort
 
-entitlements.servicelevels.sort_by { |k,v| v }.each do |k,sl|
+servicelevels.each do |sl|
   endDate  = sl.endDate
   desc     = sl.serviceLevelDescription
   daysleft = (endDate - now).round
