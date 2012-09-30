@@ -34,13 +34,16 @@ Caveats
 History
 ------------
 ### 0.5 (2012-09-30)
-**Feature:** Add -D (most distant future) option, to only consider the contract expiring in the most distant future
-**Feature:** Add -l (html link) option, to also include an HTML link to the Dell site with the warranty details
-**Fix:** Now supports snmp libs without needing rubygems
+* **Feature:** Add -D (most distant future) option, to only consider the contract expiring in the most distant future
+* **Feature:** Add -l (html link) option, to also include an HTML link to the Dell site with the warranty details
+* **Fix:** Now supports snmp libs without needing rubygems
+
 ### 0.4 (2012-08-29)
-**Feature:** Add -v (verbose) option and make -d (debug) work better  
-**Fix:** Fix -w and -c params
+* **Feature:** Add -v (verbose) option and make -d (debug) work better  
+* **Fix:** Fix -w and -c params
+
 ### 0.3 (2012-08-29)
-**Bugfix:** Issue #1 - Deal with instances where Dell doesn't pass back ServiceLevel codes and descriptions
+* **Bugfix:** Issue #1 - Deal with instances where Dell doesn't pass back ServiceLevel codes and descriptions
+
 ### 0.2 (2012-08-28)
-**Feature:** First publicly released version (That's a feature, right?!)
+* **Feature:** First publicly released version (That's a feature, right?!)
