@@ -94,6 +94,11 @@ optparse = OptionParser.new do|opts|
     options[:distant] = d
   end
 
+  options[:link] = false
+  opts.on( '-l', '--link', 'Include an HTML link to Dell\'s warranty page for this server' ) do |l|
+    options[:link] = l
+  end
+
   options[:verbose] = false
   opts.on( '-v', '--verbose', 'Enable verbose output' ) do |v|
     options[:verbose] = v
@@ -335,6 +340,10 @@ else
   puts "ERROR: Must supply either a hostname or servicetag!"
   puts optparse
   exit 2
+end
+
+if options[:link]
+  outmsg = " <a target=\"_blank\" href=\"http://www.dell.com/support/troubleshooting/Index?t=warranty&servicetag=#{serial}\">#{serial}</a>"
 end
 
 puts "Serial: #{serial}" if options[:debug]

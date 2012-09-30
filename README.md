@@ -16,6 +16,8 @@ Usage
                                            remaining on contract (Default: 30)
         -D, --distant                    Consider only the contract expiring in the
                                            most distant future
+        -l, --link                       Include an HTML link to Dell's warranty page for
+                                           this server
         -v, --verbose                    Enable verbose output
         -d, --debugging                  Enable debugging output
         -h, --help                       Display this screen
@@ -32,6 +34,7 @@ Caveats
 History
 ------------
 **Feature:** Add -D (most distant future) option, to only consider the contract expiring in the most distant future
+**Feature:** Add -l (html link) option, to also include an HTML link to the Dell site with the warranty details
 ### 0.4 (2012-08-29)
 **Feature:** Add -v (verbose) option and make -d (debug) work better  
 **Fix:** Fix -w and -c params
