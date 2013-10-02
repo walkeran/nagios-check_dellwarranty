@@ -291,15 +291,16 @@ def get_dell_warranty(serial)
 
   aResult.each do | ent | 
     entargs = Hash.new
+    if defined? ent.entitlementType
+      entargs[:type]      = ent.entitlementType
+      entargs[:startDate] = ent.startDate
+      entargs[:endDate]   = ent.endDate
+      entargs[:prov] = ent.provider                if defined? ent.provider
+      entargs[:desc] = ent.serviceLevelDescription if defined? ent.serviceLevelDescription
+      entargs[:code] = ent.serviceLevelCode        if defined? ent.serviceLevelCode
 
-    entargs[:type]      = ent.entitlementType
-    entargs[:startDate] = ent.startDate
-    entargs[:endDate]   = ent.endDate
-    entargs[:prov] = ent.provider                if defined? ent.provider
-    entargs[:desc] = ent.serviceLevelDescription if defined? ent.serviceLevelDescription
-    entargs[:code] = ent.serviceLevelCode        if defined? ent.serviceLevelCode
-
-    ents.add DellEntitlement.new(entargs)
+      ents.add DellEntitlement.new(entargs)
+    end
   end
 
   ents
