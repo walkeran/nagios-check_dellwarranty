@@ -18,8 +18,8 @@ Usage
                                            most distant future
         -l, --link                       Include an HTML link to Dell's warranty page for
                                            this server
-        -t, --timeout                    Seconds to wait before timing out, while connecting to
-                                           Dell's webservices
+        -t, --timeout <seconds>          Seconds to wait before timing out, while connecting to
+                                           Dell's webservices (Default: 5)
         -v, --verbose                    Enable verbose output
         -d, --debugging                  Enable debugging output
         -h, --help                       Display this screen
@@ -30,7 +30,7 @@ poll OpenManage on the server via SNMP to retrieve the service tag.
 Caveats
 -------
 * Change the hashbang line to point to your Ruby installation
-* Only tested on REE 1.8.7
+* Only tested on REE 1.8.7 (Feel free to let me know if this works in other envrionments)
 * You must install the 'snmp' Gem (or have the snmp Ruby library available by some other means)
 
 History
