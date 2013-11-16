@@ -36,7 +36,7 @@ WSDL_URL = 'http://xserv.dell.com/services/assetservice.asmx?WSDL'
 GUID     = '11111111-1111-1111-1111-111111111111'
 App      = 'check_dellwarranty.rb'
 
-PLUGIN_VERSION  = '0.6'
+PLUGIN_VERSION  = '0.7'
 
 Errlevels = { 0 => "OK",
               1 => "WARNING",
@@ -97,6 +97,11 @@ optparse = OptionParser.new do|opts|
   options[:link] = false
   opts.on( '-l', '--link', 'Include an HTML link to Dell\'s warranty page for this server' ) do |l|
     options[:link] = l
+  end
+
+  options[:timeout] = 5
+  opts.on( '-t', '--timeout <seconds>', 'Seconds to try connecting to Dell\'s webservice, before returning an Unknown status. (Default: 5)' ) do |t|
+    options[:timeout] = t.to_i
   end
 
   options[:verbose] = false
@@ -355,7 +360,17 @@ if options[:link]
 end
 
 puts "Serial: #{serial}" if options[:debug]
-servicelevels = get_dell_warranty(serial).servicelevels.values.sort
+
+begin
+  Timeout::timeout(options[:timeout]) do
+    servicelevels = get_dell_warranty(serial).servicelevels.values.sort
+  end
+rescue Timeout::Error
+  puts "Timed out after 5 seconds" if options[:debug]
+  errlevel = 3
+  puts "#{Errlevels[errlevel]}: Timed out while fetching data from Dell"
+  exit errlevel
+end
 
 servicelevels.each do |sl|
   endDate  = sl.endDate

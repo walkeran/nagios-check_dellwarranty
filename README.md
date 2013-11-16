@@ -18,6 +18,8 @@ Usage
                                            most distant future
         -l, --link                       Include an HTML link to Dell's warranty page for
                                            this server
+        -t, --timeout                    Seconds to wait before timing out, while connecting to
+                                           Dell's webservices
         -v, --verbose                    Enable verbose output
         -d, --debugging                  Enable debugging output
         -h, --help                       Display this screen
@@ -33,6 +35,13 @@ Caveats
 
 History
 ------------
+### 0.7 (2013-11-16)
+* **Feature:** Add -t (timeout) option, so user can specify number of seconds to try connecting to Dell's webservices
+* **Bugfix:** Issue #2 - Timeout gracefully when Dell's webservices are unreachable. Now returns Unknown status instead of hanging
+
+### 0.6 (2013-10-02)
+* **Fix:** Fixed an edge case where Dell was returning empty entitlement blocks, and we weren't handling it nicely
+
 ### 0.5 (2012-09-30)
 * **Feature:** Add -D (most distant future) option, to only consider the contract expiring in the most distant future
 * **Feature:** Add -l (html link) option, to also include an HTML link to the Dell site with the warranty details
