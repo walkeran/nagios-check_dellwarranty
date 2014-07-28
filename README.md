@@ -19,7 +19,7 @@ Usage
         -l, --link                       Include an HTML link to Dell's warranty page for
                                            this server
         -t, --timeout                    Seconds to wait before timing out, while connecting to
-                                           Dell's webservices
+                                           Dell's API
         -v, --verbose                    Enable verbose output
         -d, --debugging                  Enable debugging output
         -h, --help                       Display this screen
@@ -35,6 +35,9 @@ Caveats
 
 History
 ------------
+### 1.0 (2014-07-28)
+* **Fix:** Refactor to use new API instead of SOAP webservice (which Dell seemed to have broken)
+
 ### 0.7 (2013-11-16)
 * **Feature:** Add -t (timeout) option, so user can specify number of seconds to try connecting to Dell's webservices
 * **Bugfix:** Issue #2 - Timeout gracefully when Dell's webservices are unreachable. Now returns Unknown status instead of hanging

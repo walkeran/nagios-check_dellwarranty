@@ -25,18 +25,19 @@
 begin
   require 'date'
   require 'optparse'
-  require 'soap/wsdlDriver'
+  require 'net/http'
+  require 'net/https'
+  require 'rubygems'
+  require 'json'
 rescue Exception => e
-  puts "You need the date, optparse, and soap libraries installed."
+  puts "You need the date, and optparse, and json libraries installed."
   puts e.message
   exit 2
 end
 
-WSDL_URL = 'http://xserv.dell.com/services/assetservice.asmx?WSDL'
-GUID     = '11111111-1111-1111-1111-111111111111'
 App      = 'check_dellwarranty.rb'
 
-PLUGIN_VERSION  = '0.7'
+PLUGIN_VERSION  = '1.0'
 
 Errlevels = { 0 => "OK",
               1 => "WARNING",
@@ -100,7 +101,7 @@ optparse = OptionParser.new do|opts|
   end
 
   options[:timeout] = 5
-  opts.on( '-t', '--timeout <seconds>', 'Seconds to try connecting to Dell\'s webservice, before returning an Unknown status. (Default: 5)' ) do |t|
+  opts.on( '-t', '--timeout <seconds>', 'Seconds to try connecting to Dell\'s API, before returning an Unknown status. (Default: 5)' ) do |t|
     options[:timeout] = t.to_i
   end
 
@@ -280,29 +281,26 @@ end
 def get_dell_warranty(serial)
   ents = DellEntitlements.new
 
-  driver = suppress_warning { SOAP::WSDLDriverFactory.new(WSDL_URL).create_rpc_driver }
-  result = driver.GetAssetInformation(:guid => GUID, :applicationName => App, :serviceTags => serial)
-
+  http = Net::HTTP.new('api.dell.com', 443)
+  http.use_ssl = true
+  http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+  request = Net::HTTP::Get.new("/support/v2/assetinfo/warranty/tags.json?svctags=#{serial}&apikey=1adecee8a60444738f280aad1cd87d0e")
+  response = http.request(request)
+  
+  responsejson = JSON.parse(response.body)
+  
   aResult = Array
-  resultType = result.getAssetInformationResult.asset.entitlements.entitlementData.class.to_s
-  if resultType == 'Array'
-    aResult = result.getAssetInformationResult.asset.entitlements.entitlementData
-  elsif resultType == 'SOAP::Mapping::Object'
-    aResult = [ result.getAssetInformationResult.asset.entitlements.entitlementData ]
-  else
-    puts "Returned entitlementData from Dell is a " + resultType + ", and I don't know how to deal with that!"
-    exit 2
-  end
-
-  aResult.each do | ent | 
+  aResult = responsejson['GetAssetWarrantyResponse']['GetAssetWarrantyResult']['Response']['DellAsset']['Warranties']['Warranty']
+  
+  aResult.each do | ent |
     entargs = Hash.new
-    if defined? ent.entitlementType
-      entargs[:type]      = ent.entitlementType
-      entargs[:startDate] = ent.startDate
-      entargs[:endDate]   = ent.endDate
-      entargs[:prov] = ent.provider                if defined? ent.provider
-      entargs[:desc] = ent.serviceLevelDescription if defined? ent.serviceLevelDescription
-      entargs[:code] = ent.serviceLevelCode        if defined? ent.serviceLevelCode
+    if defined? ent["EntitlementType"]
+      entargs[:type]      = ent["EntitlementType"]
+      entargs[:startDate] = ent["StartDate"]
+      entargs[:endDate]   = ent["EndDate"]
+      entargs[:prov] = ent["ServiceProvider"]          if defined? ent["ServiceProvider"]
+      entargs[:desc] = ent["ServiceLevelDescription"]  if defined? ent["ServiceLevelDescription"]
+      entargs[:code] = ent["ServiceLevelCode"]         if defined? ent["ServiceLevelCode"]
 
       ents.add DellEntitlement.new(entargs)
     end
